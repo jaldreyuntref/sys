@@ -20,7 +20,7 @@ def askBooleanInput(prompt):
     else:
         return askBooleanInput("Invalid input. Please enter 'yes' or 'no'.")
 
-def plotWAV(route, xLabel, yLabel, title, scale=None):
+def plotWAV(route, xLabel, yLabel, title, scale=None): #preguntar que hacer con el bit depth
     with wave.open(route, 'rb') as wf:
         fs = wf.getframerate()
         nSamples = wf.getnframes()
@@ -30,14 +30,8 @@ def plotWAV(route, xLabel, yLabel, title, scale=None):
         #bit_depth = sampwidth * 8
         #print("depth", bit_depth)
         signal = np.frombuffer(audioData, dtype=np.int16)
-        lChannel = signal[0::2]
+        nChannels = wf.getnchannels()
+        signal = signal[0::2] if nChannels == 2 else signal
         time = np.linspace(0, duration, num=nSamples)
 
-        print("fs ", fs)
-        print("nSamples ", nSamples)
-        print("duracion ", duration)
-        print("cant tiempo ", len(time))
-        print("cant audioData ", len(audioData))
-        print("cantidad amplitud ", len(lChannel))
-
-        plot(time, lChannel, xLabel, yLabel, title, scale) # Plots only one channel (se podria hacer para que se pase en stereo o no)
+        plot(time, signal, xLabel, yLabel, title, scale) # Plots only one channel (se podria hacer para que se pase en stereo o no)
