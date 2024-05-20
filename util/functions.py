@@ -26,9 +26,11 @@ def getWAVData(route):
             nSamples = wf.getnframes()
             duration = nSamples / fs
             audioData = wf.readframes(nSamples)
-            #sampwidth = wf.getsampwidth()
-            #bit_depth = sampwidth * 8
-            #print("depth", bit_depth)
+            sampwidth = wf.getsampwidth()
+            bit_depth = sampwidth * 8
+            if bit_depth != 16:
+                print("Please enter a signal with a bit depth resolution of 16!") 
+                return
             signal = np.frombuffer(audioData, dtype=np.int16)
             nChannels = wf.getnchannels()
             signal = signal[0::2] if nChannels == 2 else signal
