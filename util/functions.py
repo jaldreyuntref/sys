@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import wave
 import numpy as np
+import pandas as pd
 
 def plot(xVector, yVector, xLabel = "Times (s)", yLabel = "Amplitude", title = "Signal", scale=None):
     plt.plot(xVector, yVector)
@@ -38,7 +39,17 @@ def getWAVData(route):
 
             return signal, time
 
-def plotWAV(route, xLabel, yLabel, title, scale=None): #preguntar que hacer con el bit depth
+def plotWAV(route, xLabel, yLabel, title, scale=None):
     signal, time = getWAVData(route)
     plot(time, signal, xLabel, yLabel, title, scale)
+
+    
+def getDataFrameData(route):
+    dataFrame = pd.read_csv(route, sep='\t', skiprows=1, header=None)
+    return dataFrame.iloc[:, 0], dataFrame.iloc[:, 1]
+
+def plotDataFrame(route, xLabel, yLabel, title, scale=None):
+    y, x = getDataFrameData(route)
+    plot(y, x, xLabel, yLabel, title, scale)
+
 
