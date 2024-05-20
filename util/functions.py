@@ -12,6 +12,16 @@ def plot(xVector, yVector, xLabel = "Times (s)", yLabel = "Amplitude", title = "
     plt.grid(True)
     plt.show()
 
+def createFigure(xVector, yVector, xLabel = "Times (s)", yLabel = "Amplitude", title = "Signal", scale=None):
+    fig, ax = plt.subplots()
+    ax.plot(xVector, yVector)
+    ax.set_xlabel(xLabel)
+    ax.set_ylabel(yLabel)
+    ax.set_title(title)
+    ax.set_xscale(scale) if scale is not None else None
+    ax.grid(True)
+    return fig, ax
+
 def askBooleanInput(prompt):
     user_input = input(prompt + " (yes/no): ").strip().lower()
     if user_input in ['yes', 'y']:
