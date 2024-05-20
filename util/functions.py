@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import wave
 import numpy as np
 
-def plot(xVector, yVector, xLabel, yLabel, title, scale=None):
+def plot(xVector, yVector, xLabel = "Times (s)", yLabel = "Amplitude", title = "Signal", scale=None):
     plt.plot(xVector, yVector)
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)
@@ -38,5 +38,5 @@ def getWAVData(route):
 
 def plotWAV(route, xLabel, yLabel, title, scale=None): #preguntar que hacer con el bit depth
     signal, time = getWAVData(route)
-    plot(time, signal, xLabel, yLabel, title, scale) # Plots only one channel (se podria hacer para que se pase en stereo o no)
+    plot(time, signal, xLabel, yLabel, title, scale)
 
