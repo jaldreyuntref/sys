@@ -2,8 +2,9 @@ import matplotlib.pyplot as plt
 import wave
 import numpy as np
 import pandas as pd
+from scipy.io import wavfile
 
-def plot(xVector, yVector, xLabel = "Times (s)", yLabel = "Amplitude", title = "Signal", scale=None):
+def plot(xVector, yVector, xLabel = "Time (s)", yLabel = "Amplitude", title = "Signal", scale=None):
     plt.plot(xVector, yVector)
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)
@@ -38,13 +39,14 @@ def getWAVData(route):
             duration = nSamples / fs
             audioData = wf.readframes(nSamples)
             sampwidth = wf.getsampwidth()
-            bit_depth = sampwidth * 8
-            if bit_depth != 16:
-                print("Please enter a signal with a bit depth resolution of 16!") 
-                return
+            bitDepth = sampwidth * 8
+            if bitDepth != 16:
+                signal, time = getWAVDataNon16Bit(route)
+                return signal, time
             signal = np.frombuffer(audioData, dtype=np.int16)
             nChannels = wf.getnchannels()
             signal = signal[0::2] if nChannels == 2 else signal
+            signal = signal / np.max(np.abs(signal))
             time = np.linspace(0, duration, num=nSamples)
 
             return signal, time
@@ -58,8 +60,15 @@ def getDataFrameData(route):
     dataFrame = pd.read_csv(route, sep='\t', skiprows=1, header=None)
     return dataFrame.iloc[:, 0], dataFrame.iloc[:, 1]
 
-def plotDataFrame(route, xLabel, yLabel, title, scale=None):
-    y, x = getDataFrameData(route)
-    plot(y, x, xLabel, yLabel, title, scale)
+def plotDataFrame(route, xLabel, yLabel, title, scale="log"):
+    x, y = getDataFrameData(route)
+    plot(x, y, xLabel, yLabel, title, scale)
+
+def getWAVDataNon16Bit(route):
+    WAV = wavfile.read(route)
+    signal = WAV[1]
+    time = np.linspace(0, len(signal) / WAV[0], len(signal))
+    signal = signal / np.max(np.abs(signal))
+    return signal, time
 
 
