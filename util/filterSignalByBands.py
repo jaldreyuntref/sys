@@ -1,4 +1,8 @@
-def filterSignalByBands(audioData, band="octave"):
+import numpy as np
+from scipy import signal
+from scipy.io import wavfile
+
+def filterSignalByBands(audioData, centralFrequencies, fs, impulseResponseName):
 
     """
     
@@ -14,33 +18,24 @@ def filterSignalByBands(audioData, band="octave"):
     """ 
 
     signals = []
-    centralFrequencies = [125,250,500,1000,2000,4000,8000] if band == "octave" else [125,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500,3150,4000,5000,6300,8000]
+    centralFrequencies = centralFrequencies[2:9] if len(centralFrequencies) == 10 else centralFrequencies[7:26]
 
     for frequency in centralFrequencies:
-        #Octava - G = 1.0/2.0 / 1/3 de Octava - G=1.0/6.0
-        G = 1.0/2.0 if band == "octave" else 1.0/6.0
+        G = 1.0/2.0 if len(centralFrequencies) == 10 else 1.0/6.0
         factor = np.power(2, G)
         centerFrequency_Hz = frequency
 
-        #Calculo los extremos de la banda a partir de la frecuencia central
         lowerCutoffFrequency_Hz = centerFrequency_Hz / factor
         upperCutoffFrequency_Hz = centerFrequency_Hz * factor
 
-        #print('Frecuencia de corte inferior: ', round(lowerCutoffFrequency_Hz), 'Hz')
-        #print('Frecuencia de corte superior: ', round(upperCutoffFrequency_Hz), 'Hz')
-
-        # Extraemos los coeficientes del filtro 
-        #b,a = signal.iirfilter(4, [2*np.pi*lowerCutoffFrequency_Hz,2*np.pi*upperCutoffFrequency_Hz],
-        #                            rs=60, btype='band', analog=True,
-        #                            ftype='butter')
-
-        # para aplicar el filtro es más óptimo
         sos = signal.iirfilter(4, [lowerCutoffFrequency_Hz,upperCutoffFrequency_Hz],
                                     rs=60, btype='band', analog=False,
                                     ftype='butter', fs=fs, output='sos')
-        #w, h = signal.freqs(b,a)
 
-        # aplicando filtro al audio
-        signals.append(signal.sosfilt(sos, audioData))
+        filteredSignal = signal.sosfilt(sos, audioData)
+        signals.append(filteredSignal)
+
+        filename = f"entrega_final/media/{impulseResponseName}-filtered-ir-{int(centerFrequency_Hz)}.wav"
+        wavfile.write(filename, fs, np.int16(filteredSignal * 32767))
     
     return signals

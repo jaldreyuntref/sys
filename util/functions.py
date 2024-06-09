@@ -54,4 +54,4 @@ def getWAVData(route, channel=0):
         signal = signal[:, channel]
     time = np.linspace(0, len(signal) / WAV[0], len(signal))
     signal = signal / np.max(np.abs(signal))
-    return signal, time
+    return signal, time, WAV[0]

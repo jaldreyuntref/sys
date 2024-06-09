@@ -1,9 +1,11 @@
 import numpy as np
 
 def schroederIntegral(signal):
-    absoluteSignal = np.abs(signal) / np.max(np.abs(signal))
-    schroederIntegral = np.cumsum(absoluteSignal[::-1]**2)[::-1]
-    return schroederIntegral/np.max(np.abs(schroederIntegral)) 
+    p = np.flip(signal)**2
+    schroeder_integral = np.cumsum(p)[::-1]
+    schroeder_integral /= np.max(np.abs(schroeder_integral)) 
+    schroeder_integral = np.array(schroeder_integral)
+    return schroeder_integral
 
 """
 t = np.linspace(0, 10, fs*10)

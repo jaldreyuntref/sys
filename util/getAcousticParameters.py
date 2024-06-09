@@ -6,11 +6,9 @@ sys.path.append('')
 import os
 print(os.getcwd())
 
-fs = 48000
-
 from util.linearRegression import linearRegression
 
-def getAcousticParameters(signal):
+def getAcousticParameters(signal,fs):
 
     signalAbove5db = None
     signalBetween5dbAnd35db = None
@@ -62,14 +60,13 @@ def getAcousticParameters(signal):
         # handle the error
 
     m15, b15 = linearRegression(signalBetween5dbAnd15db)
-    t60Fromt10 = ((-60 - b15) / m15) / fs
+    t60Fromt10 = ((-55 - b15) / m15) / fs
     m25, b25 = linearRegression(signalBetween5dbAnd25db)
-    t60Fromt20 = ((-60 - b25) / m25) / fs
+    t60Fromt20 = ((-55 - b25) / m25) / fs
     m35, b35 = linearRegression(signalBetween5dbAnd35db)
-    t60Fromt30 = ((-60 - b35) / m35) / fs
+    t60Fromt30 = ((-55 - b35) / m35) / fs
 
     return t60Fromt10, t60Fromt20, t60Fromt30, edt
-
 
 
 

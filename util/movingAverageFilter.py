@@ -1,10 +1,19 @@
 import numpy as np
 
 def movingAverageFilter(signal, L):
-    y = np.zeros_like(signal)
-    cumsum = np.cumsum(signal)
-    y[:L] = cumsum[:L] / np.arange(1, L + 1)
-    y[L:] = (cumsum[L:] - cumsum[:-L]) / L
+    y = np.zeros(len(signal))
+    previousTotal = 0
+    for sampleNumber in range(len(signal)):
+        if(sampleNumber) <= (L - 1):
+            total = (previousTotal + signal[sampleNumber]) 
+            previousTotal = total
+            average = total / (sampleNumber + 1)
+        else:
+            total = previousTotal + signal[sampleNumber] - signal[sampleNumber - L]
+            average = total / L
+            previousTotal = total
+        y[sampleNumber] = average
+    
     return y
 
 """
