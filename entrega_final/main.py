@@ -1,7 +1,7 @@
 import sys
 sys.path.append('')
 
-from util.functions import getWAVData, plot
+from util.functions import getWAVData, plot, createFigure
 
 from util.logarithmicScaleConversion import logarithmicScaleConversion
 from util.getAcousticParameters import getAcousticParameters
@@ -27,19 +27,17 @@ with config_path.open("r") as file:
     thirdsFrequencies = config["thirdsFrequencies"]
     T60Array = config["T60Array"]
 
-impulseResponse, time, sampleRateFromWAV = getWAVData("impulse_responses/IR1-drive/Mono.wav")
+impulseResponse, time, sampleRateFromWAV = getWAVData("impulse_responses/IR2-drive/Mono.wav")
 sampleRate = sampleRateFromWAV
 
-print(sampleRate)
-
 centralFrequencies = octaveFrequencies
-impulseResponseName = "IR1-drive"
+impulseResponseName = "IR2-drive"
 
 filteredSignalArray = filterSignalByBands(impulseResponse, centralFrequencies, sampleRate, impulseResponseName)
 
 for impulseResponse in filteredSignalArray:
     print("---------------------------------------")
-    plot(time, impulseResponse, title="Impulse Response")
+    #plot(time, impulseResponse, title="Impulse Response")
 
     smoothedImpulseResponse = hilbertTransform(impulseResponse)
     smoothedImpulseResponse = movingAverageFilter(smoothedImpulseResponse, 24000)
@@ -47,7 +45,7 @@ for impulseResponse in filteredSignalArray:
     c80 = getC80(impulseResponse, sampleRate)
     d50 = getD50(impulseResponse, sampleRate)
 
-    plot(time, smoothedImpulseResponse, title="Smoothed Impulse Response")
+    #plot(time, smoothedImpulseResponse, title="Smoothed Impulse Response")
 
     schroederIntegralOfSmoothedImpulseResponse = schroederIntegral(smoothedImpulseResponse)
 
@@ -55,8 +53,7 @@ for impulseResponse in filteredSignalArray:
 
     schroederIntegralOfSmoothedImpulseResponseLog = logarithmicScaleConversion(schroederIntegralOfSmoothedImpulseResponse)
 
-
-    t60Fromt10, t60Fromt20, t60Fromt30, edt = getAcousticParameters(schroederIntegralOfSmoothedImpulseResponseLog, sampleRate)
+    t60Fromt10, t60Fromt20, t60Fromt30, edt, m35, b35, time5dbIndex, time35dbIndex  = getAcousticParameters(schroederIntegralOfSmoothedImpulseResponseLog, sampleRate)
 
     print("t60Fromt10: ", t60Fromt10)
     print("t60Fromt20: ", t60Fromt20)
@@ -65,5 +62,13 @@ for impulseResponse in filteredSignalArray:
     print("C80: ", c80)
     print("D50: ", d50)
 
-    #plot(time, schroederIntegralOfSmoothedImpulseResponseLog, yLabel = "Amplitude (dB)", title = "Schroeder Integral Of Smoothed IR in Log scale")
+    #fig, ax = createFigure(time, schroederIntegralOfSmoothedImpulseResponseLog, yLabel = "Amplitude (dB)", title = "Schroeder Integral Of Smoothed IR in Log scale")
+    #regression_line = m35 * (np.arange(len(schroederIntegralOfSmoothedImpulseResponseLog))) + b35 
+    #ax.plot(time, logarithmicScaleConversion(smoothedImpulseResponse), label="RMS", color="green")
+    #ax.plot(time, regression_line, label='Regression Line', color='blue', linestyle='--')
+
+    #ax.axvline(x=time[time5dbIndex], color='red', linestyle='--', label='Time 5dB Index')
+    #ax.axvline(x=time[time35dbIndex], color='green', linestyle='--', label='Time 35dB Index')
+
+    plt.show()
 

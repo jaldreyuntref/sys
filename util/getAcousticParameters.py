@@ -17,30 +17,30 @@ def getAcousticParameters(signal,fs):
     edt = None
     time = np.linspace(0, len(signal) / fs, len(signal))
 
-    for i in range(len(signal) - 10000):
+    for i in range(len(signal) - 1000):
         if signal[i] <= -5 and signalAbove5db is None:
-            if np.all(signal[i:i + 10000] <= -5):
+            if np.all(signal[i:i + 1000] <= -5):
                 signalAbove5db = signal[i:]
-                time5db = time[i]
+                time5dbIndex = i
 
         if signal[i] <= -10 and edt is None:
-            if np.all(signal[i:i + 10000] <= -10):
-                edt = time[i]
+            if np.all(signal[i:i + 1000] <= -10):
+                time10dbIndex = i
 
         if signal[i] <= -15 and signalBetween5dbAnd15db is None:
-            if np.all(signal[i:i + 10000] <= -15):
+            if np.all(signal[i:i + 1000] <= -15):
                 signalBetween5dbAnd15db = signalAbove5db[:i]
-                time15db = time[i]
+                time15dbIndex = i
         
         if signal[i] <= -25 and signalBetween5dbAnd25db is None:
-            if np.all(signal[i:i + 10000] <= -25):
+            if np.all(signal[i:i + 1000] <= -25):
                 signalBetween5dbAnd25db = signalAbove5db[:i]
-                time25db = time[i]
+                time25dbIndex = i
 
         if signal[i] <= -35 and signalBetween5dbAnd35db is None:
-            if np.all(signal[i:i + 10000] <= -35):
+            if np.all(signal[i:i + 1000] <= -35):
                 signalBetween5dbAnd35db = signalAbove5db[:i]
-                time35db = time[i]
+                time35dbIndex = i
                 break
     
     if signalAbove5db is None:
@@ -59,16 +59,19 @@ def getAcousticParameters(signal,fs):
         print("Error, the signal doesnt fall beneath 15db for an extender period of time, please check the integrity of the signal")
         # handle the error
 
-    m15, b15 = linearRegression(signalBetween5dbAnd15db)
-    t60Fromt10 = ((-55 - b15) / m15) / fs
-    m25, b25 = linearRegression(signalBetween5dbAnd25db)
-    t60Fromt20 = ((-55 - b25) / m25) / fs
-    m35, b35 = linearRegression(signalBetween5dbAnd35db)
-    t60Fromt30 = ((-55 - b35) / m35) / fs
+    m10, b10 = linearRegression(signal[:time10dbIndex + 1])
+    edt = ((-60 - b10) / m10) / fs
+    m15, b15 = linearRegression(signal[time5dbIndex:time15dbIndex + 1])
+    b15 = b15 - (m15 * time5dbIndex)
+    t60Fromt10 = ((-60 - b15) / m15) / fs
+    m25, b25 = linearRegression(signal[time5dbIndex:time25dbIndex + 1])
+    b25 = b25 - (m25 * time5dbIndex)
+    t60Fromt20 = ((-60 - b25) / m25) / fs
+    m35, b35 = linearRegression(signal[time5dbIndex:time35dbIndex + 1])
+    b35 = b35 - (m35 * time5dbIndex)
+    t60Fromt30 = ((-60 - b35) / m35) / fs
 
-    return t60Fromt10, t60Fromt20, t60Fromt30, edt
-
-
+    return t60Fromt10, t60Fromt20, t60Fromt30, edt, m35, b35, time5dbIndex, time35dbIndex
 
 if __name__ == "__main__":
     from logarithmicScaleConversion import logarithmicScaleConversion
