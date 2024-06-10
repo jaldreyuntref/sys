@@ -16,9 +16,9 @@ def filterSignalByBands(audioData, centralFrequencies, fs, impulseResponseName):
         list: The list of filtered signals.
     
     """ 
-
+    print(fs)
+    print(impulseResponseName)
     signals = []
-    centralFrequencies = centralFrequencies[2:9] if len(centralFrequencies) == 10 else centralFrequencies[7:26]
 
     for frequency in centralFrequencies:
         G = 1.0/2.0 if len(centralFrequencies) == 10 else 1.0/6.0
@@ -35,7 +35,7 @@ def filterSignalByBands(audioData, centralFrequencies, fs, impulseResponseName):
         filteredSignal = signal.sosfilt(sos, audioData)
         signals.append(filteredSignal)
 
-        filename = f"entrega_final/media/{impulseResponseName}-filtered-ir-{int(centerFrequency_Hz)}.wav"
+        filename = f"entrega_final/{impulseResponseName}/filtered-ir/filtered-ir-{int(centerFrequency_Hz)}Hz.wav"
         wavfile.write(filename, fs, np.int16(filteredSignal * 32767))
     
     return signals

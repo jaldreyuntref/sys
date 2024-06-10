@@ -3,19 +3,16 @@ import matplotlib.pyplot as plt
 
 import sys
 sys.path.append('')
-import os
-print(os.getcwd())
 
 from util.linearRegression import linearRegression
 
-def getAcousticParameters(signal,fs):
+def getAcousticParameters(signal, fs):
 
     signalAbove5db = None
     signalBetween5dbAnd35db = None
     signalBetween5dbAnd25db = None
     signalBetween5dbAnd15db = None
     edt = None
-    time = np.linspace(0, len(signal) / fs, len(signal))
 
     for i in range(len(signal) - 1000):
         if signal[i] <= -5 and signalAbove5db is None:
@@ -71,7 +68,7 @@ def getAcousticParameters(signal,fs):
     b35 = b35 - (m35 * time5dbIndex)
     t60Fromt30 = ((-60 - b35) / m35) / fs
 
-    return t60Fromt10, t60Fromt20, t60Fromt30, edt, m35, b35, time5dbIndex, time35dbIndex
+    return [t60Fromt10, t60Fromt20, t60Fromt30, edt]
 
 if __name__ == "__main__":
     from logarithmicScaleConversion import logarithmicScaleConversion

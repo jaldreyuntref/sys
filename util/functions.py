@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy.io import wavfile
 import soundfile as sf
-from scipy.signal import fftconvolve
+import yaml
 
 def plot(xVector, yVector, xLabel = "Time (s)", yLabel = "Amplitude", title = "Signal", scale=None):
     plt.plot(xVector, yVector)
@@ -55,3 +55,10 @@ def getWAVData(route, channel=0):
     time = np.linspace(0, len(signal) / WAV[0], len(signal))
     signal = signal / np.max(np.abs(signal))
     return signal, time, WAV[0]
+
+def overwriteYAML(variable, value, config_path, config):
+    config[variable] = value
+    with config_path.open("w") as file:
+        yaml.dump(config, file, width=float("inf"))
+    
+    return value

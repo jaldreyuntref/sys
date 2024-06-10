@@ -1,7 +1,10 @@
 from tkinter import Tk, filedialog
 from IPython.display import clear_output
 
-from functions import askBooleanInput
+import sys
+sys.path.append('')
+
+from util.functions import askBooleanInput
 
 def saveFiles(files=[]):
     """
