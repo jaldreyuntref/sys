@@ -1,7 +1,7 @@
 import sys
 sys.path.append('')
 
-from util.functions import getWAVData, plot, createFigure, askBooleanInput
+from util.functions import getWAVData, plot, createFigure, askBooleanInput, askOctaveOrThridsInput
 
 from util.logarithmicScaleConversion import logarithmicScaleConversion
 from util.getAcousticParameters import getAcousticParameters
@@ -13,6 +13,9 @@ from util.synthesizeImpulseResponse import synthesizeImpulseResponse
 from util.getC80 import getC80
 from util.getD50 import getD50
 from util.saveFiles import saveFiles
+from util.pinkNoise import pinkNoise
+from util.generateSineSweepInverseFilter import generateSineSweepInverseFilter
+from util.adquisitionReproduction import adquisitionReproduction
 
 from pathlib import Path
 import yaml
@@ -24,28 +27,60 @@ config_path = script_dir / '..' / 'util' / 'config.yaml'
 
 with config_path.open("r") as file:
     config = yaml.safe_load(file)
-    sampleRate = config["sampleRate"]
     octaveFrequencies = config["octaveFrequencies"]
     thirdsFrequencies = config["thirdsFrequencies"]
-    T60Array = config["T60Array"]
+
 
 impulseResponses = []
 
-# preguntar si quiere carga la IR
-loadImpulseResponsesBoolean = askBooleanInput("Do you wish to load impulse responses from file directory? (only .WAV files permitted)")
+# Load IR
+loadImpulseResponsesBoolean = askBooleanInput("Do you want to load impulse responses from file directory? (only .WAV files permitted)")
 if loadImpulseResponsesBoolean:
     impulseResponseRoutes = saveFiles()
     for impulseResponseRoute in impulseResponseRoutes:
         impulseResponse, time, sampleRateFromWAV = getWAVData(impulseResponseRoute)
         impulseResponses.append([impulseResponse, time, sampleRateFromWAV, Path(impulseResponseRoute).stem])
 
-# preguntar si quiere sintetizar la IR
-synthesizeImpulseResponsesBoolean = askBooleanInput("Do you wish to synthesize and impulse response based on its T60 values?")
+# Synthesize IR
+synthesizeImpulseResponsesBoolean = askBooleanInput("Do you want to synthesize and impulse response based on its T60 values?")
+if synthesizeImpulseResponsesBoolean:
+    sampleRate = int(input("Enter a sampling rate: "))
+    octaveOrThirdsInput = askOctaveOrThridsInput("Synthesize impulse response based on octaves or thirds?")
+    synthesizeT60Frequencies = octaveFrequencies if octaveOrThirdsInput == 'octave' else thirdsFrequencies
+    T60Array = []
+    for frequency in synthesizeT60Frequencies:
+        T60Value = float(input(f"T60 value for {frequency}Hz: "))
+        T60Array.append(T60Value)
+    provideAmplitudeValuesBoolean = askBooleanInput("Do you want to provide an specific amplitude for each frequency?")
+    if provideAmplitudeValuesBoolean:
+        T60AmplitudeArray = []
+        for frequency in synthesizeT60Frequencies:
+            T60AmplitudeValue = float(input(f"T60 amplitude value for {frequency}Hz: "))
+            T60AmplitudeArray.append(T60AmplitudeValue)
+    else:
+        T60AmplitudeArray = 1
+    durationSynthesizedImpulseResponse = int(input("Enter the duration of the synthesized impulse response: "))
+    impulseResponse, time = synthesizeImpulseResponse(T60Array, durationSynthesizedImpulseResponse, octaveOrThirdsInput, T60AmplitudeArray, sampleRate)
+    impulseResponses.append([impulseResponse, time, sampleRate, "synthesized-ir"])
 
-# preguntar si quiere obtener la IR
-synthesizeImpulseResponsesBoolean = askBooleanInput("Do you wish to obtain an impulse response providing a sine sweep and an inverse filter?")
-if synthesizeImpulseResponse:
-    provideSineSweepInverseFilterPinkNoiseBoolean = askBooleanInput("Do you need a sine sweep, inverse filter and pink noise?")
+
+# Obtain IR
+synthesizeImpulseResponsesBoolean = askBooleanInput("Do you want to obtain an impulse response providing a sine sweep and an inverse filter?")
+if synthesizeImpulseResponsesBoolean:
+    provideSineSweepInverseFilterPinkNoiseBoolean = askBooleanInput("Do you need a sine sweep, inverse filter and pink noise to perform the measurement?")
+    if provideSineSweepInverseFilterPinkNoiseBoolean:
+        sampleRate = int(input("Enter a sampling rate: "))
+        pinkNoiseDuration = int(input("Enter the duration of the pink noise: "))
+        pinkNoise(pinkNoiseDuration, sampleRate)
+        lowerFrequencySineSweep = int(input("Enter a starting frequency for the sine sweep: "))
+        upperFrequencySineSweep = int(input("Enter a final frequency for the sine sweep: "))
+        sineSweepInverseFilterDuration = int(input("Enter the duration of the sine sweep and inverse filter: "))
+        generateSineSweepInverseFilter(lowerFrequencySineSweep, upperFrequencySineSweep, sineSweepInverseFilterDuration, sampleRate)
+        readyToBeginAdquisitionReproduction = askBooleanInput("Ready to begin the process of obtaining the impulse response?")
+        if readyToBeginAdquisitionReproduction:
+            adquisitionReproduction()
+
+        
 
 for impulseResponseArray in impulseResponses:
     impulseResponse = impulseResponseArray[0]

@@ -35,5 +35,5 @@ def synthesizeImpulseResponse(t60, duration = 3, band="octave", a=1, fs=44100):
 
     impulseResponse = sum(impulseResponses)
     impulseResponse = impulseResponse / np.max(np.abs(impulseResponse))
-    #wavfile.write("media/synthesized-impulse-response.wav", fs, np.int16(impulseResponse * 32767))
+    wavfile.write("entrega_final/synthesized-impulse-response.wav", fs, np.int16(impulseResponse * 32767))
     return impulseResponse, time

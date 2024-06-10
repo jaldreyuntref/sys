@@ -33,6 +33,15 @@ def askBooleanInput(prompt):
         return False
     else:
         return askBooleanInput("Invalid input. Please enter 'yes' or 'no'.")
+    
+def askOctaveOrThridsInput(prompt):
+    user_input = input(prompt + " (octave/thrids): ").strip().lower()
+    if user_input in ['octave', 'oct', '8']:
+        return 'octave'
+    elif user_input in ['thirds', 'third', '3']:
+        return 'thirds'
+    else:
+        return askOctaveOrThridsInput("Invalid input. Please enter 'octave' or 'thirds'.")
 
 def plotWAV(route, xLabel, yLabel, title, scale=None):
     signal, time = getWAVData(route)
