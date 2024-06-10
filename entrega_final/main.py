@@ -1,7 +1,7 @@
 import sys
 sys.path.append('')
 
-from util.functions import getWAVData, plot, createFigure, overwriteYAML
+from util.functions import getWAVData, plot, createFigure, askBooleanInput
 
 from util.logarithmicScaleConversion import logarithmicScaleConversion
 from util.getAcousticParameters import getAcousticParameters
@@ -32,14 +32,20 @@ with config_path.open("r") as file:
 impulseResponses = []
 
 # preguntar si quiere carga la IR
-impulseResponseRoutes = saveFiles()
-for impulseResponseRoute in impulseResponseRoutes:
-    impulseResponse, time, sampleRateFromWAV = getWAVData(impulseResponseRoute)
-    impulseResponses.append([impulseResponse, time, sampleRateFromWAV, Path(impulseResponseRoute).stem])
+loadImpulseResponsesBoolean = askBooleanInput("Do you wish to load impulse responses from file directory? (only .WAV files permitted)")
+if loadImpulseResponsesBoolean:
+    impulseResponseRoutes = saveFiles()
+    for impulseResponseRoute in impulseResponseRoutes:
+        impulseResponse, time, sampleRateFromWAV = getWAVData(impulseResponseRoute)
+        impulseResponses.append([impulseResponse, time, sampleRateFromWAV, Path(impulseResponseRoute).stem])
 
 # preguntar si quiere sintetizar la IR
+synthesizeImpulseResponsesBoolean = askBooleanInput("Do you wish to synthesize and impulse response based on its T60 values?")
 
 # preguntar si quiere obtener la IR
+synthesizeImpulseResponsesBoolean = askBooleanInput("Do you wish to obtain an impulse response providing a sine sweep and an inverse filter?")
+if synthesizeImpulseResponse:
+    provideSineSweepInverseFilterPinkNoiseBoolean = askBooleanInput("Do you need a sine sweep, inverse filter and pink noise?")
 
 for impulseResponseArray in impulseResponses:
     impulseResponse = impulseResponseArray[0]

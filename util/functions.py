@@ -38,7 +38,6 @@ def plotWAV(route, xLabel, yLabel, title, scale=None):
     signal, time = getWAVData(route)
     plot(time, signal, xLabel, yLabel, title, scale)
 
-    
 def getDataFrameData(route):
     dataFrame = pd.read_csv(route, sep='\t', skiprows=1, header=None)
     return dataFrame.iloc[:, 0], dataFrame.iloc[:, 1]
@@ -55,10 +54,3 @@ def getWAVData(route, channel=0):
     time = np.linspace(0, len(signal) / WAV[0], len(signal))
     signal = signal / np.max(np.abs(signal))
     return signal, time, WAV[0]
-
-def overwriteYAML(variable, value, config_path, config):
-    config[variable] = value
-    with config_path.open("w") as file:
-        yaml.dump(config, file, width=float("inf"))
-    
-    return value
