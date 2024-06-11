@@ -7,8 +7,8 @@ sys.path.append('')
 from util.functions import askBooleanInput
 
 def saveFiles(files=[], recursive=True):
+
     """
-    
     Creates a list containing .wav file routes provided by the user through the file explorer.
 
     Parameters:
@@ -19,7 +19,8 @@ def saveFiles(files=[], recursive=True):
     Returns:
         list: The list of the selected file routes.
 
-    """                                
+    """      
+                              
     clear_output()
     root = Tk()
     root.withdraw()

@@ -1,4 +1,20 @@
 def linearRegression(y):
+
+    """
+    Performs a linear regression on a given set of y-values.
+
+    Parameters:
+        y (list or numpy array): The dependent variable values.
+
+    Returns:
+        tuple: A tuple containing the slope (m) and intercept (b) of the 
+               best-fit line y = mx + b.
+
+    This function calculates the linear regression of the input data `y` 
+    using the least squares method. It computes the slope and intercept 
+    of the line that best fits the data points.
+    """
+
     n = len(y)
     x = list(range(1, n + 1))
     sumX = sum(x)

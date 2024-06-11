@@ -4,21 +4,21 @@ import soundfile as sf
 def generateSineSweepInverseFilter(finf, fsup, t0, fs):
 
     """
-    Genera un sine sweep (barrido sinusoidal) y su filtro inverso.
+    Generates a sine sweep signal and its inverse filter.
 
-    Esta función genera un barrido sinusoidal que incrementa su frecuencia 
-    desde una frecuencia inicial (`finf`) hasta una frecuencia final (`fsup`) 
-    en un tiempo determinado (`t0`). También calcula su filtro inverso.
+    Parameters:
+        finf (float): The initial frequency of the sweep in Hz.
+        fsup (float): The final frequency of the sweep in Hz.
+        t0 (float): The duration of the sweep in seconds.
+        fs (int): The sampling rate in Hz.
 
-    Parámetros:
-        finf, fsuy y t0, siendo los tres float que representan la frecuencia inicial,
-        final (expresadas en Hz) y la duración (en segundos) del barrido respectivamente.
+    Returns:
+        tuple: A tuple containing the sine sweep signal (numpy array), 
+               the inverse filter signal (numpy array), and the time vector (numpy array).
 
-    Retorno:
-        Una tupla que contiene: sine_sweep, filtro_inverso y t, siendo los tres arreglos
-        de numpy que representan el barrido sinusoidal, el filtro inverso y el eje temporal
-        respectivamente.
-
+    This function generates a sine sweep from finf to fsup over a period of t0 seconds 
+    and calculates its inverse filter. Both the sine sweep and the inverse filter 
+    are saved as WAV files in the 'entrega_final/obtain-IR/' directory.
     """
 
     wi = 2*np.pi*finf
@@ -29,17 +29,13 @@ def generateSineSweepInverseFilter(finf, fsup, t0, fs):
     L = t0/R
     t = np.linspace(0,t0,t0*fs)
 
-    # Definición del sine sweep
     sine_sweep = np.sin(K*(np.exp(t/L)-1))
-    sine_sweep = sine_sweep * 0.5 # para equiparar las amplitudes del sine sweep y el filtro inverso
+    sine_sweep = sine_sweep * 0.5
 
-    # Definición de la modulacion
-    m = wi/(2*np.pi*(K/L)*np.exp(t/L))  # (K/L)*math.exp(t/L) = w(t) en la consigna
+    m = wi/(2*np.pi*(K/L)*np.exp(t/L)) 
 
-    # Definición del filtro inverso
     filtro_inverso = m*sine_sweep[::-1]
-    filtro_inverso = filtro_inverso * 5 # para equiparar las amplitudes del sine sweep y el filtro inverso
-
+    filtro_inverso = filtro_inverso * 5
 
     sf.write("entrega_final/obtain-IR/sine-sweep.wav", sine_sweep, samplerate=fs)
     sf.write("entrega_final/obtain-IR/inverse-filter.wav", filtro_inverso, samplerate=fs)

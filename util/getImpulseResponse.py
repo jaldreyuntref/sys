@@ -4,7 +4,6 @@ import numpy as np
 def getImpulseResponse(sineSweep, inverseFilter):
 
     """
-
     Obtains the impulse response through the convolution of a sine sweep and its inverse filter, with the method proposed by Angelo Farina.
 
     Parameters:

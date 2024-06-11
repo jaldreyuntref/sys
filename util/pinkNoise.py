@@ -5,19 +5,16 @@ from scipy.io import wavfile
 def pinkNoise(t, fs=44100):
 
     """
-    
-    Esta función implementa la versión 2 del método de Voss para generar ruido rosa,
-    el cual se caracteriza por tener la misma densidad espectral de potencia por 
-    cada octava de frecuencia.
+    Generates pink noise using Voss's method (version 2), which is characterized by 
+    having the same power spectral density per octave of frequency.
 
-    Parámetros:
-        t (float): Duración del ruido rosa en segundos.
-        fs (int, opcional): Frecuencia de muestreo del ruido rosa (Hz). 
-            Por defecto es 44100 Hz.
+    Parameters:
+        t (float): Duration of the pink noise in seconds.
+        fs (int, optional): Sampling frequency of the pink noise in Hz. 
+                            Default is 44100 Hz.
 
-    Retorno:
-        ndarray: Arreglo de NumPy que representa el ruido rosa generado.
-
+    Returns:
+        numpy.ndarray: A NumPy array representing the generated pink noise.
     """
     
     nrows = fs * t

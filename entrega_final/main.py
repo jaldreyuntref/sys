@@ -147,52 +147,53 @@ for impulseResponseArray in impulseResponses:
 
         acousticParameters, regressionLinesValues, timeIndexes  = getAcousticParameters(schroederIntegralOfSmoothedImpulseResponseLog, sampleRate)
 
-        with acousticParametersTextFilePath.open("a") as file:
-            file.write(f"\nAcoustic Parameters {currentFrequency}Hz:\n")
-            file.write("====================\n")
-            file.write(f"T60 from T10: {acousticParameters[0]}\n")
-            file.write(f"T60 from T20: {acousticParameters[1]}\n")
-            file.write(f"T60 from T30: {acousticParameters[2]}\n")
-            file.write(f"EDT: {acousticParameters[3]}\n")
-            file.write(f"C80: {c80}\n")
-            file.write(f"D50: {d50}\n")
+        if "ERROR" not in acousticParameters:
+            with acousticParametersTextFilePath.open("a") as file:
+                file.write(f"\nAcoustic Parameters {currentFrequency}Hz:\n")
+                file.write("====================\n")
+                file.write(f"T60 from T10: {acousticParameters[0]}\n")
+                file.write(f"T60 from T20: {acousticParameters[1]}\n")
+                file.write(f"T60 from T30: {acousticParameters[2]}\n")
+                file.write(f"EDT: {acousticParameters[3]}\n")
+                file.write(f"C80: {c80}\n")
+                file.write(f"D50: {d50}\n")
 
-        if saveGraphs:
-            m15 = regressionLinesValues[0][0]
-            b15 = regressionLinesValues[0][1]
-            m25 = regressionLinesValues[1][0]
-            b25 = regressionLinesValues[1][1]
-            m35 = regressionLinesValues[2][0]
-            b35 = regressionLinesValues[2][1]
+            if saveGraphs:
+                m15 = regressionLinesValues[0][0]
+                b15 = regressionLinesValues[0][1]
+                m25 = regressionLinesValues[1][0]
+                b25 = regressionLinesValues[1][1]
+                m35 = regressionLinesValues[2][0]
+                b35 = regressionLinesValues[2][1]
 
-            time5dbIndex = timeIndexes[0]
-            time15dbIndex = timeIndexes[1]
-            time25dbIndex = timeIndexes[2]
-            time35dbIndex = timeIndexes[3]
+                time5dbIndex = timeIndexes[0]
+                time15dbIndex = timeIndexes[1]
+                time25dbIndex = timeIndexes[2]
+                time35dbIndex = timeIndexes[3]
 
-            fig, ax = createFigure(time, schroederIntegralOfSmoothedImpulseResponseLog, yLabel = "Amplitude (dB)", title = "Schroeder Integral Of Smoothed IR in Log scale")
-        
-            regressionLineT10 = m15 * (np.arange(len(schroederIntegralOfSmoothedImpulseResponseLog))) + b15 
-            regressionLineT20 = m25 * (np.arange(len(schroederIntegralOfSmoothedImpulseResponseLog))) + b25 
-            regressionLineT30 = m35 * (np.arange(len(schroederIntegralOfSmoothedImpulseResponseLog))) + b35 
+                fig, ax = createFigure(time, schroederIntegralOfSmoothedImpulseResponseLog, yLabel = "Amplitude (dB)", title = "Schroeder Integral Of Smoothed IR in Log scale")
+            
+                regressionLineT10 = m15 * (np.arange(len(schroederIntegralOfSmoothedImpulseResponseLog))) + b15 
+                regressionLineT20 = m25 * (np.arange(len(schroederIntegralOfSmoothedImpulseResponseLog))) + b25 
+                regressionLineT30 = m35 * (np.arange(len(schroederIntegralOfSmoothedImpulseResponseLog))) + b35 
 
-            ax.plot(time, regressionLineT10, label='Regression Line T10', color='green', linestyle='--')
-            ax.plot(time, regressionLineT20, label='Regression Line T20', color='blue', linestyle='--')
-            ax.plot(time, regressionLineT30, label='Regression Line T30', color='brown', linestyle='--')
+                ax.plot(time, regressionLineT10, label='Regression Line T10', color='green', linestyle='--')
+                ax.plot(time, regressionLineT20, label='Regression Line T20', color='blue', linestyle='--')
+                ax.plot(time, regressionLineT30, label='Regression Line T30', color='brown', linestyle='--')
 
-            ax.axvline(x=time[time5dbIndex], color='red', linestyle='--', label='Time 5dB Index')
-            ax.axvline(x=time[time15dbIndex], color='green', linestyle='--', label='Time 15dB Index')
-            ax.axvline(x=time[time25dbIndex], color='blue', linestyle='--', label='Time 25dB Index')
-            ax.axvline(x=time[time35dbIndex], color='brown', linestyle='--', label='Time 35dB Index')
+                ax.axvline(x=time[time5dbIndex], color='red', linestyle='--', label='Time 5dB Index')
+                ax.axvline(x=time[time15dbIndex], color='green', linestyle='--', label='Time 15dB Index')
+                ax.axvline(x=time[time25dbIndex], color='blue', linestyle='--', label='Time 25dB Index')
+                ax.axvline(x=time[time35dbIndex], color='brown', linestyle='--', label='Time 35dB Index')
 
-            ax.set_xlim([0, 1])
-            ax.set_ylim([-65, 5])
-            ax.legend()
+                ax.set_xlim([0, 1])
+                ax.set_ylim([-65, 5])
+                ax.legend()
 
-            plt.show()
-
-            fig.savefig(f'entrega_final/{impulseResponseName}/graphs/schroeder-smoothed-{impulseResponseName}-{currentFrequency}Hz-log.png', dpi=300, bbox_inches='tight')
-            plt.close(fig)
+                fig.savefig(f'entrega_final/{impulseResponseName}/graphs/schroeder-smoothed-{impulseResponseName}-{currentFrequency}Hz-log.png', dpi=300, bbox_inches='tight')
+                plt.close(fig)
+        else:
+            print(acousticParameters)
 
         frequencyCounter += 1
 

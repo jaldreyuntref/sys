@@ -18,11 +18,12 @@ def logarithmicScaleConversion(signal):
 
 
 if __name__ == "__main__":
-    from functions import getWAVData, createFigure
+    from functions import createFigure
+    from synthesizeImpulseResponse import synthesizeImpulseResponse
     
-    ir, time, fs = getWAVData("entregas_parciales\segunda_entrega\media\synthesized-impulse-response.wav")
-    ir_log = logarithmicScaleConversion(ir)
+    impulseResponse, time = synthesizeImpulseResponse(test=True)
+    impulseResponseLog = logarithmicScaleConversion(impulseResponse)
 
-    fig, ax = createFigure(time, ir_log)
+    fig, ax = createFigure(time, impulseResponseLog)
     ax.set_ylim([-70, 0])
     plt.show()

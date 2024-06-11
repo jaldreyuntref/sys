@@ -1,6 +1,23 @@
 import numpy as np
 
 def movingAverageFilter(signal, L):
+
+    """
+    Applies a moving average filter to a signal.
+
+    Parameters:
+        signal (numpy array): The input signal to be filtered.
+        L (int): The window length of the moving average filter.
+
+    Returns:
+        numpy array: The filtered signal, normalized by the maximum absolute value.
+
+    This function computes a moving average of the input signal with a specified 
+    window length `L`. It iteratively calculates the average of the signal within 
+    the window and adjusts for new incoming samples. The resulting filtered signal 
+    is then normalized by dividing by its maximum absolute value.
+    """
+    
     y = np.zeros(len(signal))
     previousTotal = 0
     for sampleNumber in range(len(signal)):

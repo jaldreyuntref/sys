@@ -4,11 +4,12 @@ import wave
 def adquisitionReproduction():
 
     """
-    Realiza la adquisición y reproducción simultánea de audio durante un tiempo determinado.
+    Performs simultaneous audio acquisition and reproduction for a specified duration.
 
-    Esta función permite grabar audio desde un dispositivo de entrada seleccionado por el usuario
-    y reproducirlo simultáneamente en un dispositivo de salida también seleccionado por el usuario.
-        
+    This function allows recording audio from a user-selected input device and simultaneously 
+    playing it back through a user-selected output device. It saves the output as a .WAV file 
+    in entrega_final/obtain-IR/output-adquisition-reproduction.wav.
+
     """
 
     pyaudio_instance = pyaudio.PyAudio()

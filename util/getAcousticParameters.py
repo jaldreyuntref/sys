@@ -7,6 +7,24 @@ sys.path.append('')
 from util.linearRegression import linearRegression
 
 def getAcousticParameters(signal, fs):
+    """
+    Calculates the acoustic parameters (T10, T20, T30, and EDT) of a signal in logarithmic scale.
+
+    Parameters:
+        signal (numpy array): The input signal in logarithmic scale.
+        fs (int): The sampling rate in Hz.
+
+    Returns:
+        tuple: A tuple containing:
+            - list: The calculated acoustic parameters [T10, T20, T30, EDT].
+            - list: The coefficients of the linear regressions [[m15, b15], [m25, b25], [m35, b35]].
+            - list: The indices corresponding to the -5dB, -15dB, -25dB, and -35dB points [time5dbIndex, time15dbIndex, time25dbIndex, time35dbIndex].
+
+    This function processes the input signal to determine specific amplitude thresholds (-5dB, -15dB, -25dB, -35dB)
+    and performs linear regression on these segments to estimate the reverberation times (T10, T20, T30)
+    and the Early Decay Time (EDT). If the signal does not fall below the required thresholds for a sufficient
+    period, appropriate error messages are displayed.
+    """
 
     signalAbove5db = None
     signalBetween5dbAnd35db = None
@@ -42,19 +60,23 @@ def getAcousticParameters(signal, fs):
     
     if signalAbove5db is None:
         print("Error, the signal doesnt fall beneath 5db for an extender period of time, please check the integrity of the signal")
-        # handle the error
+        error = "ERROR: the signal doesnt fall beneath 5db"
+        return error, '', ''
 
     if signalBetween5dbAnd35db is None:
         print("Error, the signal doesnt fall beneath 35db for an extender period of time, please check the integrity of the signal")
-        # handle the error
+        error = "ERROR: the signal doesnt fall beneath 35db"
+        return error, '', ''
 
     if signalBetween5dbAnd25db is None:
         print("Error, the signal doesnt fall beneath 25db for an extender period of time, please check the integrity of the signal")
-        # handle the error
+        error = "ERROR: the signal doesnt fall beneath 25db"
+        return error, '', ''
 
     if signalBetween5dbAnd15db is None:
         print("Error, the signal doesnt fall beneath 15db for an extender period of time, please check the integrity of the signal")
-        # handle the error
+        error = "ERROR: the signal doesnt fall beneath 15db"
+        return error, '', ''
 
     m10, b10 = linearRegression(signal[:time10dbIndex + 1])
     edt = ((-60 - b10) / m10) / fs
