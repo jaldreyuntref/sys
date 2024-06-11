@@ -16,8 +16,6 @@ def filterSignalByBands(audioData, centralFrequencies, fs, impulseResponseName):
         list: The list of filtered signals.
     
     """ 
-    print(fs)
-    print(impulseResponseName)
     signals = []
 
     for frequency in centralFrequencies:
@@ -39,3 +37,20 @@ def filterSignalByBands(audioData, centralFrequencies, fs, impulseResponseName):
         wavfile.write(filename, fs, np.int16(filteredSignal * 32767))
     
     return signals
+
+
+if __name__ == "__main__":
+    from synthesizeImpulseResponse import synthesizeImpulseResponse
+    from pathlib import Path
+    import yaml
+
+    script_dir = Path(__file__).parent
+    config_path = script_dir / '..' / 'util' / 'config.yaml'
+
+    with config_path.open("r") as file:
+        config = yaml.safe_load(file)
+        octaveFrequencies = config["octaveFrequencies"]
+
+    impulseResponse,time = synthesizeImpulseResponse(test=True)
+    filterSignalByBands(impulseResponse, octaveFrequencies, 96000, "testing-data")
+    print("Filtered synthesized impulse response in testing-data/filtered-ir.")

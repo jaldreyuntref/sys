@@ -68,43 +68,60 @@ def getAcousticParameters(signal, fs):
     b35 = b35 - (m35 * time5dbIndex)
     t60Fromt30 = ((-60 - b35) / m35) / fs
 
-    return [t60Fromt10, t60Fromt20, t60Fromt30, edt]
+    return [t60Fromt10, t60Fromt20, t60Fromt30, edt], [[m15, b15], [m25, b25], [m35, b35]], [time5dbIndex, time15dbIndex, time25dbIndex, time35dbIndex]
 
 if __name__ == "__main__":
     from logarithmicScaleConversion import logarithmicScaleConversion
-    from linearRegression import linearRegression
+    from synthesizeImpulseResponse import synthesizeImpulseResponse
+    from hilbertTransform import hilbertTransform
     from movingAverageFilter import movingAverageFilter
-    from functions import getWAVData, plot, createFigure
-    from pathlib import Path
-    import yaml
-    script_dir = Path(__file__).parent
-    config_path = script_dir / 'config.yaml'
+    from schroederIntegral import schroederIntegral
+    from functions import createFigure
 
-    with config_path.open("r") as file:
-        config = yaml.safe_load(file)
-        T60Array = config['T60Array']
+    impuseResponse, time = synthesizeImpulseResponse(test=True)
+    smoothedImpulseResponse = movingAverageFilter(hilbertTransform(impuseResponse), 2200)
+    schroederIntegralOfSmoothedImpulseResponse = schroederIntegral(smoothedImpulseResponse)
+    schroederIntegralOfSmoothedImpulseResponseLog = logarithmicScaleConversion(smoothedImpulseResponse)
+    acousticParameters, regressionLinesValues, timeIndexes = getAcousticParameters(schroederIntegralOfSmoothedImpulseResponseLog, 44100)
 
-    impulseResponse, time = getWAVData("impulse_responses/hamilton-mausoleum/b-format/hm2_000_bformat_48k.wav")
+    print("T60 from T10: ", acousticParameters[0])
+    print("T60 from T20: ", acousticParameters[1])
+    print("T60 from T30: ", acousticParameters[2])
+    print("EDT: ", acousticParameters[3])
 
-    impulseResponseLog = logarithmicScaleConversion(impulseResponse)
+    m15 = regressionLinesValues[0][0]
+    b15 = regressionLinesValues[0][1]
+    m25 = regressionLinesValues[1][0]
+    b25 = regressionLinesValues[1][1]
+    m35 = regressionLinesValues[2][0]
+    b35 = regressionLinesValues[2][1]
 
-    plot(time, impulseResponseLog)
+    time5dbIndex = timeIndexes[0]
+    time15dbIndex = timeIndexes[1]
+    time25dbIndex = timeIndexes[2]
+    time35dbIndex = timeIndexes[3]
 
-    smoothedImpulseResponseLog = movingAverageFilter(impulseResponseLog, 20)
+    fig, ax = createFigure(time, schroederIntegralOfSmoothedImpulseResponseLog, yLabel = "Amplitude (dB)", title = "Schroeder Integral Of Smoothed IR in Log scale")
 
-    fig, ax = createFigure(time, smoothedImpulseResponseLog, title="IR between -5 and -35db")
+    regressionLineT10 = m15 * (np.arange(len(schroederIntegralOfSmoothedImpulseResponseLog))) + b15 
+    regressionLineT20 = m25 * (np.arange(len(schroederIntegralOfSmoothedImpulseResponseLog))) + b25 
+    regressionLineT30 = m35 * (np.arange(len(schroederIntegralOfSmoothedImpulseResponseLog))) + b35 
 
-    smoothedImpulseResponseLog5to35db, m, b = getAcousticParameters(smoothedImpulseResponseLog)
+    ax.plot(time, regressionLineT10, label='Regression Line T10', color='green', linestyle='--')
+    ax.plot(time, regressionLineT20, label='Regression Line T20', color='blue', linestyle='--')
+    ax.plot(time, regressionLineT30, label='Regression Line T30', color='brown', linestyle='--')
 
-    timeSmoothedImpulseResponseLog5to35db5to35db = time[:len(smoothedImpulseResponseLog5to35db)]
-    ax.plot(timeSmoothedImpulseResponseLog5to35db5to35db, smoothedImpulseResponseLog5to35db, label='Processed Signal', color='red')
+    ax.axvline(x=time[time5dbIndex], color='red', linestyle='--', label='Time 5dB Index')
+    ax.axvline(x=time[time15dbIndex], color='green', linestyle='--', label='Time 15dB Index')
+    ax.axvline(x=time[time25dbIndex], color='blue', linestyle='--', label='Time 25dB Index')
+    ax.axvline(x=time[time35dbIndex], color='brown', linestyle='--', label='Time 35dB Index')
 
-    regressionLine = m * np.arange(len(smoothedImpulseResponseLog)) + b
+    ax.set_xlim([0, 1])
+    ax.set_ylim([-65, 5])
+    ax.legend()
 
-    ax.plot(time, regressionLine, label='Regression Line', color='blue', linestyle='--')
-
-    ax.set_ylim([-70, 0])
     plt.show()
+
 
     
             

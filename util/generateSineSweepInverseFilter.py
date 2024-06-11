@@ -41,7 +41,11 @@ def generateSineSweepInverseFilter(finf, fsup, t0, fs):
     filtro_inverso = filtro_inverso * 5 # para equiparar las amplitudes del sine sweep y el filtro inverso
 
 
-    sf.write("media/sine-sweep.wav", sine_sweep, samplerate=fs)
-    sf.write("media/filtro-inverso.wav", filtro_inverso, samplerate=fs)
+    sf.write("entrega_final/obtain-IR/sine-sweep.wav", sine_sweep, samplerate=fs)
+    sf.write("entrega_final/obtain-IR/inverse-filter.wav", filtro_inverso, samplerate=fs)
 
     return (sine_sweep, filtro_inverso, t)
+
+if __name__ == "__main__":
+    generateSineSweepInverseFilter(20, 2000, 5, 44100)
+    print("Sine sweep and inverse filter generated in obtain-IR.")

@@ -1,19 +1,21 @@
 import matplotlib.pyplot as plt
-import wave
 import numpy as np
 import pandas as pd
 from scipy.io import wavfile
 import soundfile as sf
-import yaml
 
-def plot(xVector, yVector, xLabel = "Time (s)", yLabel = "Amplitude", title = "Signal", scale=None):
+def plot(xVector, yVector, xLabel = "Time (s)", yLabel = "Amplitude", title = "Signal", scale=None, save=False, show=True):
     plt.plot(xVector, yVector)
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)
     plt.xscale(scale) if scale is not None else None
     plt.title(title)
     plt.grid(True)
-    plt.show()
+    if save:
+        plt.savefig(save)
+        plt.close()
+    if show:
+        plt.show()
 
 def createFigure(xVector, yVector, xLabel = "Times (s)", yLabel = "Amplitude", title = "Signal", scale=None):
     fig, ax = plt.subplots()
@@ -57,7 +59,7 @@ def plotDataFrame(route, xLabel, yLabel, title, scale="log"):
 
 def getWAVData(route, channel=0):
     WAV = wavfile.read(route)
-    signal = WAV[1]
+    signal = np.array(WAV[1])
     if len(signal.shape) > 1:  
         signal = signal[:, channel]
     time = np.linspace(0, len(signal) / WAV[0], len(signal))

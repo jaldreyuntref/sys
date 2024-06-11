@@ -6,7 +6,7 @@ sys.path.append('')
 
 from util.functions import askBooleanInput
 
-def saveFiles(files=[]):
+def saveFiles(files=[], recursive=True):
     """
     
     Creates a list containing .wav file routes provided by the user through the file explorer.
@@ -25,8 +25,14 @@ def saveFiles(files=[]):
     root.withdraw()
     root.call('wm', 'attributes', '.', '-topmost', True)
     files.append(filedialog.askopenfilename(filetypes=[("wav files", "*.wav")]))
-    anotherFile = askBooleanInput("Do you wish to add another file?")
-    if anotherFile:
-        saveFiles(files)
+    if recursive:
+        anotherFile = askBooleanInput("Do you wish to add another file?")
+        if anotherFile:
+            saveFiles(files)
             
     return files
+
+if __name__ == "__main__":
+    routes = saveFiles()
+    for route in routes:
+        print(route)

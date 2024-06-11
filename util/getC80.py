@@ -7,3 +7,13 @@ def getC80(signal, fs):
     energyAfter80ms = np.sum(signalSquared[t80:]) / fs
     return 10 * np.log10(energyBefore80ms / energyAfter80ms)
 
+
+if __name__ == "__main__":
+    from synthesizeImpulseResponse import synthesizeImpulseResponse
+    from hilbertTransform import hilbertTransform
+    from movingAverageFilter import movingAverageFilter
+
+    impuseResponse, time = synthesizeImpulseResponse(test=True)
+    smoothedImpulseResponse = movingAverageFilter(hilbertTransform(impuseResponse), 2200)
+
+    print("C80: ", getC80(impuseResponse, 44100))

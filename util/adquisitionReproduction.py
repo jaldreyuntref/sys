@@ -8,11 +8,6 @@ def adquisitionReproduction():
 
     Esta función permite grabar audio desde un dispositivo de entrada seleccionado por el usuario
     y reproducirlo simultáneamente en un dispositivo de salida también seleccionado por el usuario.
-
-    ¿Cómo lo hace?:
-        * Imprime en la consola los dispositivos de audio disponibles y solicita al usuario que 
-            seleccione los dispositivos de entrada y salida deseados.
-        * Reproduce el audio grabado a través del dispositivo de salida seleccionado.
         
     """
 
@@ -70,16 +65,12 @@ def adquisitionReproduction():
     
     pyaudio_instance.terminate()
 
-    wfInput = wave.open("media/input.wav", 'wb')
-    wfInput.setnchannels(1)
-    wfInput.setsampwidth(pyaudio_instance.get_sample_size(pyaudio.paInt16))
-    wfInput.setframerate(selected_input_device['defaultSampleRate'])
-    wfInput.writeframes(b''.join(inputFrames))
-    wfInput.close()
-
-    wfOutput = wave.open("media/output.wav", 'wb')
+    wfOutput = wave.open("entrega_final/obtain-IR/output-adquisition-reproduction.wav", 'wb')
     wfOutput.setnchannels(1)
     wfOutput.setsampwidth(pyaudio_instance.get_sample_size(pyaudio.paInt16))
     wfOutput.setframerate(selected_input_device['defaultSampleRate'])
     wfOutput.writeframes(b''.join(outputFrames))
     wfOutput.close()
+
+if __name__ == "__main__":
+    adquisitionReproduction()

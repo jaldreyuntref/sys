@@ -14,18 +14,11 @@ def movingAverageFilter(signal, L):
             previousTotal = total
         y[sampleNumber] = average
     
-    return y
+    return y / np.max(np.abs(y))
 
-"""
-t = np.linspace(0, 10, fs*10)
-signal = 5*np.sin(2*np.pi*t) + np.sin(10 * 2*np.pi*t) + np.sin(16000 * 2*np.pi*t)
+if __name__ == "__main__":
+    from synthesizeImpulseResponse import synthesizeImpulseResponse
+    from functions import plot
 
-plot(t, signal)
-
-filteredSignal = movingAverageFilter(signal, 22000)
-time = np.linspace(0, len(signal) / fs, len(signal))
-
-plot(time, filteredSignal)
-
-filteredSignal
-"""
+    impulseResponse,time = synthesizeImpulseResponse(test=True)
+    plot(time, movingAverageFilter(impulseResponse, 200), title="movingAverageFilter result")

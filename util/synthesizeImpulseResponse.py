@@ -1,7 +1,18 @@
 import numpy as np
 from scipy.io import wavfile
 
-def synthesizeImpulseResponse(t60, duration = 3, band="octave", a=1, fs=44100):
+from pathlib import Path
+import yaml
+
+script_dir = Path(__file__).parent
+config_path = script_dir / '..' / 'util' / 'config.yaml'
+
+with config_path.open("r") as file:
+    config = yaml.safe_load(file)
+    octaveFrequencies = config["octaveFrequencies"]
+    T60Array = config["T60Array"]
+
+def synthesizeImpulseResponse(t60 = T60Array, duration = 3, centralFrequencies = octaveFrequencies, a=1, fs=44100, synthesizedImpulseResponseName="synthesized-ir", test=False):
 
     """
         
@@ -19,8 +30,6 @@ def synthesizeImpulseResponse(t60, duration = 3, band="octave", a=1, fs=44100):
             list:  The time vector.
 
         """  
-
-    centralFrequencies = [31.5,63,125,250,500,1000,2000,4000,8000,16000] if band == "octave" else [25,31.5,40,50,63,80,100,125,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500,3150,4000,5000,6300,8000,10000,12500,16000,20000]
     if a == 1:
         a = np.ones(len(centralFrequencies))
     if len(a) != len(centralFrequencies) != len(t60):
@@ -35,5 +44,14 @@ def synthesizeImpulseResponse(t60, duration = 3, band="octave", a=1, fs=44100):
 
     impulseResponse = sum(impulseResponses)
     impulseResponse = impulseResponse / np.max(np.abs(impulseResponse))
-    wavfile.write("entrega_final/synthesized-impulse-response.wav", fs, np.int16(impulseResponse * 32767))
+    if test == False:
+        wavfile.write(f"entrega_final/{synthesizedImpulseResponseName}/{synthesizedImpulseResponseName}.wav", fs, np.int16(impulseResponse * 32767))
     return impulseResponse, time
+
+
+if __name__ == "__main__":
+    from synthesizeImpulseResponse import synthesizeImpulseResponse
+    from functions import plot
+
+    impulseResponse,time = synthesizeImpulseResponse(test=True)
+    plot(time, impulseResponse, title="synthesizeImpulseResponse result")

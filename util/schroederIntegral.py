@@ -7,12 +7,11 @@ def schroederIntegral(signal):
     schroeder_integral = np.array(schroeder_integral)
     return schroeder_integral
 
-"""
-t = np.linspace(0, 10, fs*10)
-signal = np.sin(np.pi*t)
 
-schroederIntegralSignal = schroederIntegral(signal)
+if __name__ == "__main__":
+    from synthesizeImpulseResponse import synthesizeImpulseResponse
+    from functions import plot
 
+    impulseResponse,time = synthesizeImpulseResponse(test=True)
+    plot(time, schroederIntegral(impulseResponse), title="schroederIntegral result")
 
-plot(t, schroederIntegralSignal)
-"""

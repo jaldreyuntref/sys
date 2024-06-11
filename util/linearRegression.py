@@ -11,15 +11,21 @@ def linearRegression(y):
     
     return m, b
 
-"""
-# Regresión lineal
-m, b = linearRegression(schroederIntegralSignal)
-xFit = list(range(1, len(schroederIntegralSignal) + 1))
-yFit = [m * xi + b for xi in xFit]
+if __name__ == "__main__":
+    from synthesizeImpulseResponse import synthesizeImpulseResponse
+    from schroederIntegral import schroederIntegral
+    from logarithmicScaleConversion import logarithmicScaleConversion
+    from functions import createFigure
+    import matplotlib.pyplot as plt
 
-# Crear figura y plotear datos y regresión lineal
-fig, ax = createFigure(range(1, len(schroederIntegralSignal) + 1), schroederIntegralSignal)
-ax.plot(xFit, yFit, label="Linear Regression", color='red')
-ax.legend()
-plt.show()
-"""
+    impulseResponse,time = synthesizeImpulseResponse(test=True)
+    impulseResponse = schroederIntegral(impulseResponse)
+    impulseResponse = logarithmicScaleConversion(impulseResponse)
+    m, b = linearRegression(impulseResponse)
+    xFit = list(range(1, len(impulseResponse) + 1))
+    yFit = [m * xi + b for xi in xFit]
+    
+    fig, ax = createFigure(range(1, len(impulseResponse) + 1), impulseResponse)
+    ax.plot(xFit, yFit, label="Linear Regression", color='red')
+    ax.legend()
+    plt.show()
