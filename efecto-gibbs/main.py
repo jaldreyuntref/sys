@@ -1,6 +1,7 @@
 from harmonics import calculateFourierCoefficients, reconstructWave
 from sawtooth import sawtooth
 from ecm import calculateECM
+from gibbs import gibbs
 
 import matplotlib.pyplot as plt
 
@@ -75,7 +76,6 @@ while currentHarmonic <= maxHarmonics and ECM > thresholdECM:
 
     currentHarmonic += 1
 
-
 plt.figure(figsize=(10, 8))
 
 plt.subplot(3, 1, 1)
@@ -106,3 +106,12 @@ plt.tight_layout()
 plt.show()
 
 print(f'MSE final: {errors[-1]}, N armónicos usados: {currentHarmonic - 1}')
+
+
+print("Calcular el fenómeno de Gibbs...")
+amountHarmonics = int(input("Ingrese la cantidad de armónicos: "))
+
+a0, an, bn = calculateFourierCoefficients(sawtoothWave, time, amountHarmonics, T=1/frequency)
+reconstructedWave50 = reconstructWave(a0, an, bn, time, amountHarmonics, T=1/frequency)
+
+gibbs(sawtoothWave, reconstructedWave50, samplingRate, frequency)
