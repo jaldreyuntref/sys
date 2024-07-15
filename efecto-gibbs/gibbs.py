@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 def gibbs(wave, reconstructedWave, samplingRate, frequency):
     discontinuityIndex = np.argmax(np.abs(np.diff(wave)))
     overshoot = np.max(reconstructedWave[discontinuityIndex:discontinuityIndex + samplingRate//frequency])
+    gibbsMeasured = overshoot - np.max(wave)
 
     discontinuityJump = np.abs(wave[discontinuityIndex + 1] - wave[discontinuityIndex])
     gibbsTheoretical = 0.0895 * discontinuityJump
 
-    gibbsMeasured = overshoot - np.max(wave)
     errorPercentage = (1 - (gibbsMeasured / gibbsTheoretical)) * 100
 
     print(f'Teórico Gibbs Overshoot: {gibbsTheoretical}')
@@ -35,7 +35,7 @@ def gibbs(wave, reconstructedWave, samplingRate, frequency):
     # Subplot 2: Overshoot medido en la señal reconstruida
     plt.subplot(3, 1, 2)
     plt.plot(reconstructedWave, label='Señal reconstruida')
-    plt.plot(discontinuityIndex, overshoot, 'ro', label='Overshoot medido')
+    plt.axhline(y=overshoot, color='r', linestyle='--', label='Overshoot medido')
     plt.title('Señal Reconstruida y Overshoot Medido')
     plt.xlabel('Muestras')
     plt.ylabel('Amplitud')
