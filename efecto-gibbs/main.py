@@ -7,6 +7,7 @@ from gibbs import gibbs
 import numpy as np
 import matplotlib.pyplot as plt
 
+print("-------------------------------------------------------------------")
 print("Reconstruir la señal diente se sierra para 10, 20 y 50 armónicos...")
 
 frequency = 1
@@ -62,6 +63,7 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
+print("-------------------------------------------------------------------")
 print("Calcular ECM en puntos de continuidad...")
 samplesInOnePeriod = int(((1/frequency) * samplingRate))
 
@@ -112,7 +114,7 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-
+print("-------------------------------------------------------------------")
 print("Reconstruir la señal diente de sierra hasta que el ECM supere cierto umbral...")
 
 thresholdECM = float(input("Ingrese un umbral para el ECM: "))
@@ -161,6 +163,7 @@ plt.show()
 
 print(f'ECM final: {errors[-1]}, N armónicos usados: {currentHarmonic - 1}')
 
+print("-------------------------------------------------------------------")
 print("Calcular el fenómeno de Gibbs...")
 amountHarmonics = int(input("Ingrese la cantidad de armónicos: "))
 
@@ -169,10 +172,12 @@ reconstructedWaveGibbs = reconstructWave(a0, an, bn, time, amountHarmonics, T=1/
 
 gibbs(sawtoothWave, reconstructedWaveGibbs, samplingRate, frequency)
 
+print("-------------------------------------------------------------------")
 print("Repetir proceso para una señal triangular...")
 
 triangleWave, time = triangle(frequency, samplingRate, duration)
 
+print("-------------------------------------------------------------------")
 print("Reconstruir la señal triangular para 10, 20 y 50 armónicos...")
 
 a0, an, bn = calculateFourierCoefficients(triangleWave, time, 10, T=1/frequency)
@@ -222,6 +227,7 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
+print("-------------------------------------------------------------------")
 print("Reconstruir la señal triangular hasta que el ECM supere cierto umbral...")
 
 thresholdECM = float(input("Ingrese un umbral para el ECM: "))
@@ -270,6 +276,7 @@ plt.show()
 
 print(f'ECM final: {errors[-1]}, N armónicos usados: {currentHarmonic - 1}')
 
+print("-------------------------------------------------------------------")
 print("Calcular el fenómeno de Gibbs...")
 amountHarmonics = int(input("Ingrese la cantidad de armónicos: "))
 
