@@ -45,9 +45,9 @@ def gibbs(wave, reconstructedWave, samplingRate, frequency):
     # Subplot 3: Primera derivada de la señal original
     plt.subplot(3, 1, 3)
     diff_wave = np.diff(wave)
-    plt.plot(diff_wave, label='Primera derivada de la señal original', color='g')
+    plt.plot(diff_wave, label='Diferencia punto a punto de la señal original', color='g')
     plt.plot(discontinuityIndex, diff_wave[discontinuityIndex], 'ro', label='Punto de discontinuidad')
-    plt.title('Primera Derivada de la Señal Original')
+    plt.title('Diferencia punto a punto de la señal original')
     plt.xlabel('Muestras')
     plt.ylabel('Diferencia')
     plt.grid(True)
